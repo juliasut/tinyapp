@@ -30,6 +30,15 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// add another page to display a single URL and its shortened form.
+// The end point for it will be in the format /urls/:shortURL.
+// The : in front of id indicates that id is a route parameter.
+// The value in this part of the url will be available in the req.params object.
+app.get('/urls/:shortURL', (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  res.render('urls_show', templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
