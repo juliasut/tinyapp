@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
+const bodyParser = require('body-parser');
+
+// The body-parser library will convert the request body from a Buffer into string that we can read.
+// It will then add the data to the req(request) object under the key body.
+app.use(bodyParser.urlencoded({extended: true}));
 
 // set embedded js template to view engine
 app.set('view engine', 'ejs');
@@ -30,6 +35,11 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+// routes should be ordered from most specific to least specific
+app.get('/urls/new', (req, res) => {
+  res.render('urls_new');
+});
+
 // add another page to display a single URL and its shortened form.
 // The end point for it will be in the format /urls/:shortURL.
 // The : in front of id indicates that id is a route parameter.
@@ -38,6 +48,15 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render('urls_show', templateVars);
 });
+
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  res.send('Ok');
+});
+
+function generateRandomString() {
+
+}
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
