@@ -1,11 +1,12 @@
 const express = require('express');
 const app = express();
-const PORT = 8080;
-const bodyParser = require('body-parser');
+const morgan = require('morgan')
+const PORT = 3000;
 
 // The body-parser library will convert the request body from a Buffer into string that we can read.
 // It will then add the data to the req(request) object under the key body.
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true}));
+app.use(morgan('dev'));
 
 // set embedded js template to view engine
 app.set('view engine', 'ejs');
@@ -16,17 +17,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-app.get('/', (req, res) => {
-  res.send('Hello!');
-});
+// app.get('/', (req, res) => {
+//   res.send('Hello!');
+// });
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n')
-});
+// app.get('/hello', (req, res) => {
+//   res.send('<html><body>Hello <b>World</b></body></html>\n')
+// });
 
 // we pass templateVars obj to the template 'urls_index' in views for ejs to render
 // ejs looks for views folder by default. No need for file extention, just name
@@ -36,6 +37,7 @@ app.get('/urls', (req, res) => {
 });
 
 // routes should be ordered from most specific to least specific
+// res.render() is a route handler to pass URL data to our template
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
@@ -49,15 +51,23 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-app.post('/urls', (req, res) => {
-  console.log(req.body);
-  res.send('Ok');
+app.get('/u/:shortURL', (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
-function generateRandomString() {
+// POST request has a body, while a GET request does not. To read the buffer = we need a parser express.urlencoded
+// will convert body into a string and add key body to req object
+app.post('/urls', (req, res) => {
+  let shortURL = Math.random().toString(36).substring(7);
+  
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(req.body);
+  res.redirect('/urls/:shortURL');
+});
 
-}
+
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`App listening on port ${PORT}!`);
 });
