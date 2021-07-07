@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan')
-const PORT = 8000;
+const PORT = 3000;
 
 // The body-parser library will convert the request body from a Buffer into string that we can read.
 // It will then add the data to the req(request) object under the key body.
@@ -45,6 +45,7 @@ app.get('/urls/new', (req, res) => {
 // add another page to display a single URL and its shortened form.
 // The end point for it will be in the format /urls/:shortURL.
 // The : in front of id indicates that id is a route parameter.
+// req.params buitl in express only for URL paramameters
 // The value in this part of the url will be available in the req.params object.
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
@@ -56,11 +57,15 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
+app.post('/urls/:shortURL/delete', (req,res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect('/urls')
+});
 // POST request has a body, while a GET request does not. To read the buffer = we need a parser express.urlencoded
 // will convert body into a string and add key body to req object
 app.post('/urls', (req, res) => {
   let shortURL = Math.random().toString(36).substring(7);
-  
   urlDatabase[shortURL] = req.body.longURL;
   console.log(req.body);
   res.redirect('/urls/:shortURL');
