@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const { get } = require('http');
 const PORT = 1235;
 
 // The body-parser library will convert the request body from a Buffer into string that we can read.
@@ -19,11 +20,20 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+app.get('/register', (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"]
+  }
+  console.log('req', req);
+  res.render('register', templateVars);
+});
+
+
 app.get('/login', (req, res) => {
   const templateVars = {
     username: req.cookies["username"]
   }
-  res.render('/urls', templateVars);
+  res.render('', templateVars);
 });
 
 app.get('/urls.json', (req, res) => {
@@ -51,7 +61,7 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[req.params.shortURL],
     username: req.cookies["username"]
    };
-  console.log(shortURL, longURL);
+  console.log("shortURL", req.params.shortURL);
   res.render('urls_show', templateVars);
 });
 
@@ -78,16 +88,17 @@ app.post('/urls/:shortURL/delete', (req,res) => {
   res.redirect('/urls');
 });
 
-app.post('urls/:shortURL', (req, res) => {
+app.post('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL] = req.body.longURL;
+  console.log("anything")
   res.redirect('/urls');
 });
 
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/:shortUrl`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 
