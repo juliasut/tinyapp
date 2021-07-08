@@ -14,7 +14,6 @@ app.set('view engine', 'ejs');
 
 const generateRandomString = () => Math.random().toString(36).substr(2, 6);
 
-// set db to store full and shortened urls 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -48,7 +47,8 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.cookie('userName', req.body.username);
+  let userName = req.body.userName;
+  res.cookie('userName', userName);
   res.redirect('/urls');
 })
 
