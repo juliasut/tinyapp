@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
-const PORT = 8080;
+const PORT = 1235;
 
 // The body-parser library will convert the request body from a Buffer into string that we can read.
 // It will then add the data to the req(request) object under the key body.
@@ -20,7 +20,10 @@ const urlDatabase = {
 };
 
 app.get('/login', (req, res) => {
-  res.redirect('/urls');
+  const templateVars = {
+    username: req.cookies["username"]
+  }
+  res.render('/urls', templateVars);
 });
 
 app.get('/urls.json', (req, res) => {
@@ -28,29 +31,46 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    username: req.cookies["username"],
+    urls: urlDatabase 
+  };
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = {
+    username: req.cookies["username"]
+  }
+  res.render('urls_new', templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = { 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
+   };
+  console.log(shortURL, longURL);
   res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
   res.redirect(longURL);
 });
 
 app.post('/login', (req, res) => {
-  let userName = req.body.userName;
-  res.cookie('userName', userName);
+  let username = req.body.username;
+  res.cookie('username', username);
   res.redirect('/urls');
-})
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie("username");
+  res.redirect('/urls');
+});
 
 app.post('/urls/:shortURL/delete', (req,res) => {
   const shortURL = req.params.shortURL;
@@ -67,7 +87,7 @@ app.post('urls/:shortURL', (req, res) => {
 app.post('/urls', (req, res) => {
   let shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect(`/urls/:shortUrl`);
 });
 
 
