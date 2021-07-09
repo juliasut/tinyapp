@@ -24,8 +24,14 @@ const users = {
 };
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b6UTxQ: {
+      longURL: "https://www.tsn.ca",
+      userID: "aJ48lW"
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "aJ48lW"
+  }
 };
 
 const generateRandomString = () => Math.random().toString(36).substr(2, 6);
@@ -43,7 +49,7 @@ app.get('/register', (req, res) => {
   const templateVars = {
     user: users[res.cookie.user_id]
   }
-  console.log('req.cookies', req.cookies);
+  // console.log('req.cookies', req.cookies);
   res.render('register', templateVars);
 });
 
@@ -71,8 +77,11 @@ app.get('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
+  if (!req.cookies.user_id) {
+    return res.redirect('/login');
+  }
   const templateVars = {
-    user: users[res.cookie.user_id]
+    user: users[req.cookies.user_id]
   }
   res.render('urls_new', templateVars);
 });
@@ -81,7 +90,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { 
     shortURL: req.params.shortURL, 
     longURL: urlDatabase[req.params.shortURL],
-    user: users[res.cookie.user_id]
+    user: users[req.cookies.user_id]
    };
   console.log("shortURL", req.params.shortURL);
   res.render('urls_show', templateVars);
@@ -124,7 +133,7 @@ app.post('/login', (req, res) => {
   }
 
   res.cookie('user_id', user.id);
-  console.log(req.cookies)
+  // console.log(req.cookies)
   res.redirect('/urls');
 });
 
