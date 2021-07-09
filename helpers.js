@@ -2,7 +2,8 @@
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
-      return user;
+      console.log(database[user])
+      return database[user];
     }
   }
   return undefined;
@@ -10,7 +11,7 @@ const getUserByEmail = function(email, database) {
 
 const generateRandomString = () => Math.random().toString(36).substr(2, 6);
 
-const urlsForUser = (id) => {
+const urlsForUser = (id, urlDatabase) => {
   let userUrls = {};
   for (let url in urlDatabase) {
     if (urlDatabase[url].userID === id) {
