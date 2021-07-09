@@ -81,16 +81,20 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  if(!userID) {
+    return res.status(400).send("Please <a href='/login>login</a> or <a href='/register>register</a> first.")
+  }
   const templateVars = { 
     user: users[req.cookies.user_id],
-    urls: urlDatabase 
+    urls: urlsForUser(req.cookies.user_id) 
   };
   console.log(templateVars)
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  if (!req.cookies.user_id) {
+  
+  if (!userID) {
     return res.redirect('/login');
   }
   const templateVars = {
@@ -100,7 +104,7 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get('/urls/:shortURL', (req, res) => {
-  const userID = req.cookies.user_id;
+  
   if (!userID) {
     res.redirect('/login');
     return;
@@ -147,7 +151,7 @@ app.post('/login', (req, res) => {
   const password = req.body.password;
   const user = getUserByEmail(email);
   if (!user || password !== user.password) {
-    return res.status(400).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
+    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
 
   res.cookie('user_id', user.id);
@@ -161,12 +165,21 @@ app.post('/logout', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req,res) => {
+  // const userID = req.cookies.user_id;
+  if (!userID) {
+    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`)
+  }
+
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
 
 app.post('/urls/:shortURL', (req, res) => {
+  // const userID = req.cookies.user_id;
+  if (!userID) {
+    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`)
+  }
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect('/urls');
