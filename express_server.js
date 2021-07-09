@@ -13,6 +13,8 @@ app.use(cookieSession({
   keys: ['Fluffy', 'thecat']
 }));
 
+const { generateRandomString, getUserByEmail, urlsForUser } = require('./helpers');
+
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -37,30 +39,6 @@ const urlDatabase = {
   }
 };
 
-const generateRandomString = () => Math.random().toString(36).substr(2, 6);
-const getUserByEmail = function(email) {
-  const values = Object.values(users);
-  for (const user of values) {
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-}
-
-const urlsForUser = (id) => {
-  let userUrls = {};
-  for (let url in urlDatabase) {
-    if (urlDatabase[url].userID === id) {
-      userUrls[url] = {
-        longURL: urlDatabase[url].longURL,
-        userID: urlDatabase[url].userID
-      };
-    }
-  }
-  return userUrls;
-};
-
 
 app.get("/", (req, res) => {
   req.session.user_id ? res.redirect('/urls') : res.redirect('/login');
@@ -77,16 +55,16 @@ app.get('/register', (req, res) => {
 
 app.get('/login', (req, res) => {
   const templateVars = {
-    user: null
+    user: users[req.session.user_id]
   }
-  req.session.user_id ? res.redirect('/urls') : res.redirect('/login', templateVars);
+  req.session.user_id ? res.redirect('/urls') : res.render('login', templateVars);
 });
 
 
 app.get('/urls', (req, res) => {
-  const userID = req.cookies.user_id;
+  const userID = req.session.user_id;
   if(!userID) {
-    return res.status(400).send("Please <a href='/login>login</a> or <a href='/register>register</a> first.")
+    return res.status(400).send(`Please <a href='/login'>login</a> or <a href='/register'>register</a> first.`)
   }
   const templateVars = { 
     user: users[req.session.user_id],
