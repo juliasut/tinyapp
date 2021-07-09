@@ -138,7 +138,6 @@ app.post('/login', (req, res) => {
   const password = req.body.password;
   const user = getUserByEmail(email, users);
   console.log(user);
-  // console.log('password: ', typeof password, 'user.password: ', typeof user.password);
   if (!user) {
     return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
