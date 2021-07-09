@@ -24,17 +24,15 @@
 
     <% if (!user) { %>
       <div>
-        <form method="POST" action=/login>
-          <input type="text" name="username" placeholder="Username" style="width: 300px; margin: 1em">
-          <button type="submit">Login</button>
-        </form>
+        <a class="nav-item nav-link" href="/login">Login</a>
+        <a class="nav-item nav-link" href="/register">Register</a>
       </div>
     <% } else { %>
       <div>
       <form method="POST" action="/logout">
         <button type="submit">Logout</button>
       </form>
-      Logged in as: <%= email %>
+      <a class="nav-item">Logged in as: <%= user.email %></a>
       </div>
     <% } %>
   </nav>

@@ -14,12 +14,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: "1111"
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: "1234"
   }
 };
 
@@ -50,8 +50,10 @@ app.get('/register', (req, res) => {
 
 app.get('/login', (req, res) => {
   const templateVars = {
-    user: users[res.cookie.user_id]
+    user: null
   }
+  // console.log(templateVars)
+  // console.log(res.cookies.user_id)
   res.render('login', templateVars);
 });
 
@@ -61,9 +63,10 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const templateVars = { 
-    user: users[res.cookie.user_id],
+    user: users[req.cookies.user_id],
     urls: urlDatabase 
   };
+  console.log(templateVars)
   res.render('urls_index', templateVars);
 });
 
@@ -113,13 +116,20 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  let username = req.body.username;
-  res.cookie('username', username);
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = getUserByEmail(email);
+  if (!user || password !== user.password) {
+    return res.status(400).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
+  }
+
+  res.cookie('user_id', user.id);
+  console.log(req.cookies)
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect('/urls');
 });
 
@@ -140,7 +150,6 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(`/urls/${shortURL}`);
 });
-
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`);
