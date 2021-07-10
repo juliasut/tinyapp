@@ -1,12 +1,20 @@
 <%- include('partials/_header') %> 
 
 <body>
-  <div>
-    <h1>Create Account</h1>
-    <form method="POST" action="/register">
-    <input type="email" name="email" placeholder="email:">
-    <input type="password" name="password" placeholder="password:">
-    <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-  </div>
+  <main style="margin: 1em;">
+    <div>
+      <h1>Create Account</h1>
+      <form method="POST" action="/register">
+        <label for="email">Email address </label>
+        <br>
+      <input type="email" name="email" placeholder="email:">
+      <p></p>
+      <label for="password">Password </label>
+      <br>
+      <input type="password" name="password" placeholder="password:">
+      <p></p>
+      <button type="submit" class="btn btn-primary">Register</button>
+      </form>
+    </div>
+  </main>
 </body>

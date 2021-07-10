@@ -24,7 +24,7 @@ const users = {
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "1234"
+    password: bcrypt.hashSync('1234', 10)
   }
 };
 
@@ -140,12 +140,9 @@ app.post('/login', (req, res) => {
   console.log(user);
   if (!user) {
     return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
-  }
-
-  else if (!bcrypt.compareSync(password, user.password)) {
+  } else if (!bcrypt.compareSync(password, user.password)) {
     return res.status(403).send(`Wrong password`);
   } else {
-
     req.session.user_id = user.id;
     res.redirect('/urls');
   }

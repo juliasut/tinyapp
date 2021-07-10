@@ -1,10 +1,18 @@
 <%- include('partials/_header') %>
 
 <body>
-  <h1>Login</h1>
-  <form action="/login" method="POST">
-    <input type="email" name="email" placeholder="Email">
-    <input type="password" name="password" placeholder="Password" style="width: 300px; margin: 1em">
-    <button type="submit" class="btn btn-primary">Log in!</button>
-  </form>
+  <main style="margin: 1em;">
+    <h1>Login</h1>
+    <form action="/login" method="POST">
+      <label for="email">Email address </label>
+      <br>
+      <input type="email" name="email" placeholder="Email">
+      <p></p>
+      <label for="password">Password </label>
+      <br>
+      <input type="password" name="password" placeholder="Password">
+      <p></p>
+      <button type="submit" class="btn btn-primary">Log in!</button>
+    </form>
+  </main>
 </body>
