@@ -40,6 +40,9 @@ const urlDatabase = {
 };
 
 
+
+// All app.get()
+
 app.get("/", (req, res) => {
   req.session.user_id ? res.redirect('/urls') : res.redirect('/login');
 });
@@ -64,7 +67,7 @@ app.get('/login', (req, res) => {
 app.get('/urls', (req, res) => {
   const userID = req.session.user_id;
   if(!userID) {
-    return res.status(400).send(`Please <a href='/login'>login</a> or <a href='/register'>register</a> first.`)
+    return res.status(400).send(`Please <a href='/login'>login</a> or <a href='/register'>register</a> first.`);
   }
   const templateVars = { 
     user: users[req.session.user_id],
@@ -106,6 +109,9 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
+
+
+// All app.post()
 
 app.post('/register', (req, res) => {
   const id = generateRandomString();
@@ -158,7 +164,7 @@ app.post('/logout', (req, res) => {
 app.post('/urls/:shortURL/delete', (req,res) => {
   const userID = req.session.user_id;
   if (!userID) {
-    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`)
+    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
 
   const shortURL = req.params.shortURL;
@@ -170,7 +176,7 @@ app.post('/urls/:shortURL/delete', (req,res) => {
 app.post('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
-    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`)
+    return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
 
   const shortURL = req.params.shortURL;
