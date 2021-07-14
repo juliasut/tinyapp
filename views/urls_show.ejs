@@ -21,7 +21,7 @@
       <h3>Edit</h3>
       <form method="POST" action="<%= shortURL %>">
         <label for="longURL">New URL:</label>
-        <input type="text" name="longURL" placeholder="<%= longURL %>" />
+        <input type="url" required name="longURL" placeholder="<%= longURL %>" />
         <button type="submit">Submit</button>
       </form>
     </div>

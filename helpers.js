@@ -1,4 +1,4 @@
-
+// function to check if user is already registered
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
@@ -9,9 +9,10 @@ const getUserByEmail = function(email, database) {
   return undefined;
 }
 
+// generates random string to be used as the shortURL and as the user's ID (learning purposes only, not for production)
 const generateRandomString = () => Math.random().toString(36).substr(2, 6);
 
-// Function retrieves URLs that belong to the logged user
+// function retrieves URLs that belong to the logged user
 const urlsForUser = (id, urlDatabase) => {
   let userUrls = {};
   for (let url in urlDatabase) {

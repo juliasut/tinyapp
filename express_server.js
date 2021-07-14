@@ -41,8 +41,9 @@ const urlDatabase = {
 
 
 
-// All app.get()
+// all app.get() functions:
 
+// handles the home page
 app.get("/", (req, res) => {
   req.session.user_id ? res.redirect('/urls') : res.redirect('/login');
 });
@@ -63,7 +64,7 @@ app.get('/login', (req, res) => {
   req.session.user_id ? res.redirect('/urls') : res.render('login', templateVars);
 });
 
-
+// renders the index page
 app.get('/urls', (req, res) => {
   const userID = req.session.user_id;
   if(!userID) {
@@ -76,7 +77,7 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-
+// this function needs to ALWAYS be placed before the /urls/:shortURL to be rendered correctly
 app.get('/urls/new', (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
@@ -88,7 +89,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-
+// renders individual URL pages
 app.get('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
@@ -102,7 +103,7 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-
+// redirects users to the long URL from the short URL
 app.get('/u/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL].longURL;
@@ -110,9 +111,10 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 
+// all app.post() functions:
 
-// All app.post()
 
+// if user is not registered, add them to the database, generates random user id and hashes the password
 app.post('/register', (req, res) => {
   const id = generateRandomString();
   const email = req.body.email;
@@ -121,7 +123,6 @@ app.post('/register', (req, res) => {
   if (!email || !password) {
     return res.status(400).send(`Missing email or password. Please <a href='/register'> try again</a>`);
   }
-
   if (getUserByEmail(email, users)) {
     return res.status(400).send(`User with this email already exists. Please <a href='/register'>try again</a>`);
   }
@@ -134,11 +135,10 @@ app.post('/register', (req, res) => {
 
   users[id] = user;
   req.session.user_id = id;
-  console.log("Added new user to the database", users[id]);
   res.redirect('/urls');
 });
 
-
+// checks user credentials for login
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -154,13 +154,13 @@ app.post('/login', (req, res) => {
   }
 });
 
-
+// clears the cookies on logout
 app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect("/login");
 });
 
-
+// handles delete URL button from the index page
 app.post('/urls/:shortURL/delete', (req,res) => {
   const userID = req.session.user_id;
   if (!userID) {
@@ -172,30 +172,23 @@ app.post('/urls/:shortURL/delete', (req,res) => {
   res.redirect('/urls');
 });
 
-
+// edits URL form
 app.post('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
     return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
-
   const shortURL = req.params.shortURL;
   urlDatabase[shortURL].longURL = req.body.longURL;
-  
-  console.log('shortURL', shortURL, 'longURL', urlDatabase[shortURL].longURL);
-  console.log('urlDatabase', urlDatabase);
   res.redirect('/urls');
 });
 
-
+// handles new URL form submission
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = {};
   urlDatabase[shortURL].longURL = req.body.longURL;
   urlDatabase[shortURL].userID = req.session.user_id;
-
-  console.log('shortURL:  ', shortURL, 'longURL:  ', urlDatabase[shortURL].longURL);
-  console.log('urlDatabase:  ', urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
