@@ -11,6 +11,7 @@ const getUserByEmail = function(email, database) {
 
 const generateRandomString = () => Math.random().toString(36).substr(2, 6);
 
+// Function retrieves URLs that belong to the logged user
 const urlsForUser = (id, urlDatabase) => {
   let userUrls = {};
   for (let url in urlDatabase) {
