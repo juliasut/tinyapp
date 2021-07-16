@@ -88,6 +88,7 @@ app.get('/urls/new', (req, res) => {
 // renders individual URL pages
 app.get('/urls/:shortURL', (req, res) => {
   const userID = req.session.user_id;
+  const shortURL = req.params.shortURL;
   if (!userID) {
     return res.redirect('/login');
   }
@@ -96,6 +97,8 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.session.user_id]
    };
+
+   if (! urlsForUser(userID).hasOwnProperty(shortURL)) return('Only the owner of URL has access to this content');
   res.render('urls_show', templateVars);
 });
 
@@ -155,11 +158,11 @@ app.post('/logout', (req, res) => {
 // handles delete URL button from the index page
 app.post('/urls/:shortURL/delete', (req,res) => {
   const userID = req.session.user_id;
+  const shortURL = req.params.shortURL;
   if (!userID) {
     return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
-
-  const shortURL = req.params.shortURL;
+  if (! urlsForUser(userID).hasOwnProperty(shortURL)) return('Only the owner of URL can delete this content');
   delete urlDatabase[shortURL];
   res.redirect('/urls');
 });
