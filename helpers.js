@@ -2,7 +2,6 @@
 const getUserByEmail = function(email, database) {
   for (const user in database) {
     if (database[user].email === email) {
-      console.log(database[user])
       return database[user];
     }
   }
