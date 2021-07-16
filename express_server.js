@@ -39,10 +39,6 @@ const urlDatabase = {
   }
 };
 
-
-
-// all app.get() functions:
-
 // handles the home page
 app.get("/", (req, res) => {
   req.session.user_id ? res.redirect('/urls') : res.redirect('/login');
@@ -109,10 +105,6 @@ app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
-
-
-// all app.post() functions:
-
 
 // if user is not registered, add them to the database, generates random user id and hashes the password
 app.post('/register', (req, res) => {
