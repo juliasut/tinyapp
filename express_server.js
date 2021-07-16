@@ -97,7 +97,7 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.session.user_id]
    };
-
+   // checks if the URL belongs to the user
    if (! urlsForUser(userID).hasOwnProperty(shortURL)) return('Only the owner of URL has access to this content');
   res.render('urls_show', templateVars);
 });
@@ -162,6 +162,7 @@ app.post('/urls/:shortURL/delete', (req,res) => {
   if (!userID) {
     return res.status(403).send(`Invalid credentials. Please <a href='/login'>try again</a>`);
   }
+  // checks if the URL belongs to the user
   if (! urlsForUser(userID).hasOwnProperty(shortURL)) return('Only the owner of URL can delete this content');
   delete urlDatabase[shortURL];
   res.redirect('/urls');
